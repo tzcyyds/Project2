@@ -7,7 +7,7 @@
 #include "Chatser.h"
 #include "ChatserDlg.h"
 #include "afxdialogex.h"
-
+#include "CDlgMessage.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -52,6 +52,7 @@ END_MESSAGE_MAP()
 
 CChatserDlg::CChatserDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CHATSER_DIALOG, pParent)
+	, m_port("")
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -59,12 +60,15 @@ CChatserDlg::CChatserDlg(CWnd* pParent /*=nullptr*/)
 void CChatserDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_COMBO1, m_combo);
+	DDX_Text(pDX, IDC_EDIT1, m_port);
 }
 
 BEGIN_MESSAGE_MAP(CChatserDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON1, &CChatserDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -100,6 +104,9 @@ BOOL CChatserDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	m_combo.AddString("TCP");
+	m_combo.AddString("UDP");
+	m_combo.SetCurSel(0);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -153,3 +160,11 @@ HCURSOR CChatserDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CChatserDlg::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CDlgMessage m_window;
+	m_window.DoModal();
+}
