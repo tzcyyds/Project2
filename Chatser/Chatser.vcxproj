@@ -183,6 +183,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CDlgMessage.h" />
     <ClInclude Include="Chatser.h" />
     <ClInclude Include="ChatserDlg.h" />
     <ClInclude Include="framework.h" />
@@ -191,6 +192,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CDlgMessage.cpp" />
     <ClCompile Include="Chatser.cpp" />
     <ClCompile Include="ChatserDlg.cpp" />
     <ClCompile Include="pch.cpp">
