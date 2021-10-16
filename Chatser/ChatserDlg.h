@@ -11,6 +11,7 @@ class CChatserDlg : public CDialogEx
 // 构造
 public:
 	CChatserDlg(CWnd* pParent = nullptr);	// 标准构造函数
+	~CChatserDlg();// 析构函数
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -35,5 +36,12 @@ public:
 	afx_msg void OnBnClickedButton1();
 private:
 	CComboBox m_combo;
-	CString m_port;
+	DWORD m_ip;
+	UINT m_port_local;
+	UINT m_port_remote;
+public:
+	afx_msg void OnCbnSelchangeCombo1();
+private:
+	CEdit con_port_remote;
+	CIPAddressCtrl con_ip;
 };
