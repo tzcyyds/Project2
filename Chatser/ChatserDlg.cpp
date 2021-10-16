@@ -8,6 +8,7 @@
 #include "ChatserDlg.h"
 #include "afxdialogex.h"
 #include "CDlgMessage.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -52,16 +53,27 @@ END_MESSAGE_MAP()
 
 CChatserDlg::CChatserDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CHATSER_DIALOG, pParent)
-	, m_port("")
+	, m_ip(0x7f000001)
+	, m_port_local(9190)
+	, m_port_remote(9191)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}
+
+CChatserDlg::~CChatserDlg()
+{
+
 }
 
 void CChatserDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO1, m_combo);
-	DDX_Text(pDX, IDC_EDIT1, m_port);
+	DDX_IPAddress(pDX, IDC_IPADDRESS1, m_ip);
+	DDX_Text(pDX, IDC_EDIT1, m_port_local);
+	DDX_Text(pDX, IDC_EDIT4, m_port_remote);
+	DDX_Control(pDX, IDC_EDIT4, con_port_remote);
+	DDX_Control(pDX, IDC_IPADDRESS1, con_ip);
 }
 
 BEGIN_MESSAGE_MAP(CChatserDlg, CDialogEx)
@@ -69,6 +81,7 @@ BEGIN_MESSAGE_MAP(CChatserDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CChatserDlg::OnBnClickedButton1)
+	ON_CBN_SELCHANGE(IDC_COMBO1, &CChatserDlg::OnCbnSelchangeCombo1)
 END_MESSAGE_MAP()
 
 
@@ -107,6 +120,8 @@ BOOL CChatserDlg::OnInitDialog()
 	m_combo.AddString("TCP");
 	m_combo.AddString("UDP");
 	m_combo.SetCurSel(0);
+	OnCbnSelchangeCombo1();
+	SetWindowText("Server");
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -162,9 +177,29 @@ HCURSOR CChatserDlg::OnQueryDragIcon()
 
 
 
-void CChatserDlg::OnBnClickedButton1()
+void CChatserDlg::OnBnClickedButton1()// 启动连接按钮
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CDlgMessage m_window;
+	UpdateData(TRUE);
+	CDlgMessage m_window(m_ip, m_port_local, m_port_remote, m_combo.GetCurSel());
+	UpdateData(FALSE);
+	EndDialog(0);// 关闭窗口
 	m_window.DoModal();
+}
+
+
+void CChatserDlg::OnCbnSelchangeCombo1()
+{
+	// TODO: Add your control notification handler code here
+	BOOL is_udp = m_combo.GetCurSel();
+	if (is_udp)
+	{
+		con_port_remote.EnableWindow(TRUE);
+		con_ip.EnableWindow(TRUE);
+	}
+	else
+	{
+		con_port_remote.EnableWindow(FALSE);
+		con_ip.EnableWindow(FALSE);
+	}
 }

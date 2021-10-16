@@ -53,7 +53,9 @@ END_MESSAGE_MAP()
 
 CChatcli1Dlg::CChatcli1Dlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CHATCLI1_DIALOG, pParent)
-	, m_port("")
+	, m_ip(0x7f000001)
+	, m_port_local(9191)
+	, m_port_remote(9190)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -66,9 +68,11 @@ CChatcli1Dlg::~CChatcli1Dlg()
 void CChatcli1Dlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_IPADDRESS1, m_ip);
-	DDX_Text(pDX, IDC_EDIT1, m_port);
 	DDX_Control(pDX, IDC_COMBO1, m_combo);
+	DDX_IPAddress(pDX, IDC_IPADDRESS1, m_ip);
+	DDX_Text(pDX, IDC_EDIT1, m_port_local);
+	DDX_Text(pDX, IDC_EDIT4, m_port_remote);
+	DDX_Control(pDX, IDC_EDIT1, con_port_local);
 }
 
 BEGIN_MESSAGE_MAP(CChatcli1Dlg, CDialogEx)
@@ -76,6 +80,7 @@ BEGIN_MESSAGE_MAP(CChatcli1Dlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CChatcli1Dlg::OnBnClickedButton1)
+	ON_CBN_SELCHANGE(IDC_COMBO1, &CChatcli1Dlg::OnCbnSelchangeCombo1)
 END_MESSAGE_MAP()
 
 
@@ -114,6 +119,8 @@ BOOL CChatcli1Dlg::OnInitDialog()
 	m_combo.AddString("TCP");
 	m_combo.AddString("UDP");
 	m_combo.SetCurSel(0);
+	OnCbnSelchangeCombo1();
+	SetWindowText("Client");
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -172,7 +179,24 @@ HCURSOR CChatcli1Dlg::OnQueryDragIcon()
 void CChatcli1Dlg::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CDlgMessage m_window;
+	UpdateData(TRUE);
+	CDlgMessage m_window(m_ip, m_port_local, m_port_remote, m_combo.GetCurSel());
+	UpdateData(FALSE);
+	EndDialog(0);// 关闭窗口
 	m_window.DoModal();
-	
+}
+
+
+void CChatcli1Dlg::OnCbnSelchangeCombo1()
+{
+	// TODO: Add your control notification handler code here
+	BOOL is_udp = m_combo.GetCurSel();
+	if (is_udp)
+	{
+		con_port_local.EnableWindow(TRUE);
+	}
+	else
+	{
+		con_port_local.EnableWindow(FALSE);
+	}
 }

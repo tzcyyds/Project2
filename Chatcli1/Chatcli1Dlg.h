@@ -34,9 +34,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButton1();
-	CIPAddressCtrl m_ip;
-	CString m_port;
-	CComboBox m_combo;
 private:
-
+	CComboBox m_combo;
+	DWORD m_ip;
+	UINT m_port_local;
+	UINT m_port_remote;
+public:
+	afx_msg void OnCbnSelchangeCombo1();
+private:
+	CEdit con_port_local;
 };

@@ -9,8 +9,5 @@
 
 // 添加要在此处预编译的标头
 #include "framework.h"
-#include <winsock2.h>
-//#include "zlog.h"
-#pragma comment(lib,"wsock32.lib")
-//#pragma comment(lib, "zlog.lib")
+
 #endif //PCH_H
