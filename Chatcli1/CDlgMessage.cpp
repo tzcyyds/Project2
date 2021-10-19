@@ -6,7 +6,8 @@
 #include "CDlgMessage.h"
 #include "afxdialogex.h"
 
-#define WM_SOCK WM_USER + 1 // 自定义消息，在WM_USER的基础上进行
+
+#define WM_SOCK WM_USER + 1// 自定义消息，在WM_USER的基础上进行
 #define MAX_BUF_SIZE 128
 
 
@@ -26,6 +27,7 @@ CDlgMessage::CDlgMessage(DWORD _m_ip, UINT _m_port_local, UINT _m_port_remote,
 	hCommSock = 0;
 	memset(&servAdr, 0, sizeof(servAdr));
 	servAdrLen = sizeof(servAdr);
+	updatetime();
 }
 
 CDlgMessage::~CDlgMessage()
@@ -37,7 +39,8 @@ void CDlgMessage::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT3, m_send);
-	DDX_Control(pDX, IDC_LIST1, m_recv);
+	//  DDX_Control(pDX, IDC_LIST1, m_recv);
+	DDX_Control(pDX, IDC_RICHEDIT21, m_RichEdit);
 }
 
 
@@ -105,6 +108,21 @@ BOOL CDlgMessage::OnInitDialog()
 			exit(1);
 		}
 	}
+
+	CHARFORMAT cf;
+	ZeroMemory(&cf, sizeof(CHARFORMAT));
+	cf.cbSize = sizeof(CHARFORMAT);
+	cf.dwMask = CFM_BOLD | CFM_COLOR | CFM_FACE |
+		CFM_ITALIC | CFM_SIZE | CFM_UNDERLINE;
+	cf.dwEffects = CFE_UNDERLINE;
+	cf.yHeight = 16 * 16;//文字高度
+	cf.crTextColor = RGB(200, 100, 255); //文字颜色
+	strcpy_s(cf.szFaceName, _T("隶书"));//设置字体
+	m_RichEdit.SetDefaultCharFormat(cf);
+
+	CString strText = "Hello, World! By Colin\r\n";
+	m_RichEdit.SetWindowText(strText);
+
 	return TRUE;
 }
 
@@ -136,6 +154,14 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 						break;
 					}
 				}
+				else
+				{
+					CString m_recv(buf);
+					m_RichEdit.SetSel(-1, -1);
+					updatetime();
+					m_recv = "recv"+ m_time + m_recv;
+					m_RichEdit.ReplaceSel(m_recv);
+				}
 			}
 			else
 			{
@@ -148,6 +174,14 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 						MessageBox("recv() failed", "Client", MB_OK);
 						break;
 					}
+				}
+				else
+				{
+					CString m_recv(buf);
+					m_RichEdit.SetSel(-1, -1);
+					updatetime();
+					m_recv = "recv" + m_time + m_recv;
+					m_RichEdit.ReplaceSel(m_recv);
 				}
 			}
 			//buf[strLen] = 0;
@@ -177,6 +211,11 @@ void CDlgMessage::OnBnClickedButton2()// 发送按钮
 	{
 		send(hCommSock, m_send, strLen, 0);
 	}
+	//m_RichEdit.SetWindowText(m_send);
+	m_RichEdit.SetSel(-1, -1);
+	updatetime();
+	m_send = "send" + m_time + m_send;
+	m_RichEdit.ReplaceSel(m_send);
 	m_send.Empty();
 	UpdateData(FALSE);
 }
@@ -187,3 +226,17 @@ void CDlgMessage::OnBnClickedButton3()// 返回按钮
 	// TODO: Add your control notification handler code here
 }
 
+
+void CDlgMessage::updatetime()
+{
+	// TODO: 在此处添加实现代码.
+	time_t rawtime;
+	struct tm timeinfo;
+	char timE[40] = { 0 };
+	time(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
+	//strftime(timE, 40, "Date:\n%Y-%m-%d\nTime:\n%I:%M:%S\n", &timeinfo);
+	strftime(timE, 40, " %I:%M:%S > ", &timeinfo);
+	//printf("%s", timE);
+	m_time = timE;
+}
