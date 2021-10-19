@@ -56,6 +56,10 @@ BOOL CDlgMessage::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SetWindowText("Client");
+
+	ModifyStyleEx(0, WS_EX_APPWINDOW);  // 添加任务栏
+	ShowWindow(SW_SHOW);
+
 	servAdr.sin_family = AF_INET;
 	servAdr.sin_addr.s_addr = htonl(m_ip);
 	servAdr.sin_port = htons(m_port_remote);
@@ -102,6 +106,9 @@ BOOL CDlgMessage::OnInitDialog()
 			MessageBox("connect() failed", "Client", MB_OK);
 			exit(1);
 		}
+
+
+		
 		if (WSAAsyncSelect(hCommSock, m_hWnd, WM_SOCK, FD_READ | FD_CLOSE) == SOCKET_ERROR)
 		{
 			MessageBox("WSAAsyncSelect() failed", "Client", MB_OK);
@@ -114,15 +121,16 @@ BOOL CDlgMessage::OnInitDialog()
 	cf.cbSize = sizeof(CHARFORMAT);
 	cf.dwMask = CFM_BOLD | CFM_COLOR | CFM_FACE |
 		CFM_ITALIC | CFM_SIZE | CFM_UNDERLINE;
-	cf.dwEffects = CFE_UNDERLINE;
-	cf.yHeight = 16 * 16;//文字高度
-	cf.crTextColor = RGB(200, 100, 255); //文字颜色
+	// cf.dwEffects = CFE_UNDERLINE;
+	cf.yHeight = 14 * 14;//文字高度
+	cf.crTextColor = RGB(6, 128, 67); //文字颜色
 	strcpy_s(cf.szFaceName, _T("隶书"));//设置字体
 	m_RichEdit.SetDefaultCharFormat(cf);
 
-	CString strText = "Hello, World! By Colin\r\n";
-	m_RichEdit.SetWindowText(strText);
+	// CString strText = "init";
+	// m_RichEdit.SetWindowText(strText);
 
+	SendwithColor("Connection Accepted.\n", 6, 128, 67, 14);  // 自定义函数：设置发送文字颜色和大小并发送
 	return TRUE;
 }
 
@@ -157,10 +165,9 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 				else
 				{
 					CString m_recv(buf);
-					m_RichEdit.SetSel(-1, -1);
 					updatetime();
-					m_recv = "recv"+ m_time + m_recv;
-					m_RichEdit.ReplaceSel(m_recv);
+					SendwithColor("server" + m_time, 30, 144, 255, 14);  // 自定义函数：设置发送文字颜色和大小并发送
+					SendwithColor(m_recv, 0, 0, 0, 15);
 				}
 			}
 			else
@@ -178,10 +185,9 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 				else
 				{
 					CString m_recv(buf);
-					m_RichEdit.SetSel(-1, -1);
 					updatetime();
-					m_recv = "recv" + m_time + m_recv;
-					m_RichEdit.ReplaceSel(m_recv);
+					SendwithColor("server" + m_time, 30, 144, 255, 14);  // 自定义函数：设置发送文字颜色和大小并发送
+					SendwithColor(m_recv, 0, 0, 0, 15);
 				}
 			}
 			//buf[strLen] = 0;
@@ -212,10 +218,9 @@ void CDlgMessage::OnBnClickedButton2()// 发送按钮
 		send(hCommSock, m_send, strLen, 0);
 	}
 	//m_RichEdit.SetWindowText(m_send);
-	m_RichEdit.SetSel(-1, -1);
 	updatetime();
-	m_send = "send" + m_time + m_send;
-	m_RichEdit.ReplaceSel(m_send);
+	SendwithColor("client" + m_time, 6, 128, 67, 14);  // 自定义函数：设置发送文字颜色和大小并发送
+	SendwithColor(m_send, 0, 0, 0, 15);
 	m_send.Empty();
 	UpdateData(FALSE);
 }
@@ -236,7 +241,26 @@ void CDlgMessage::updatetime()
 	time(&rawtime);
 	localtime_s(&timeinfo, &rawtime);
 	//strftime(timE, 40, "Date:\n%Y-%m-%d\nTime:\n%I:%M:%S\n", &timeinfo);
-	strftime(timE, 40, " %I:%M:%S > ", &timeinfo);
+	strftime(timE, 40, " %Y-%m-%d %H:%M:%S\n", &timeinfo);
 	//printf("%s", timE);
 	m_time = timE;
+}
+
+
+void CDlgMessage::SendwithColor(CString s, int R, int G, int B, int size)  // 自定义发送文字的颜色、字体
+{
+	m_RichEdit.SetSel(-1, -1);
+
+	CHARFORMAT cf;
+	ZeroMemory(&cf, sizeof(CHARFORMAT));
+	cf.cbSize = sizeof(CHARFORMAT);
+	cf.dwMask = CFM_BOLD | CFM_COLOR | CFM_FACE |
+		CFM_ITALIC | CFM_SIZE | CFM_UNDERLINE;
+	// cf.dwEffects = CFE_UNDERLINE;
+	cf.yHeight = size * size;//文字高度
+	cf.crTextColor = RGB(R, G, B); //文字颜色
+	strcpy_s(cf.szFaceName, _T("隶书"));//设置字体
+
+	m_RichEdit.SetSelectionCharFormat(cf);
+	m_RichEdit.ReplaceSel(s);
 }
