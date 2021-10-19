@@ -44,6 +44,9 @@ void CDlgMessage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CDlgMessage, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON2, &CDlgMessage::OnBnClickedButton2)
 	ON_BN_CLICKED(IDC_BUTTON3, &CDlgMessage::OnBnClickedButton3)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST1, &CDlgMessage::OnLvnItemchangedList1)
+	ON_EN_CHANGE(IDC_EDIT3, &CDlgMessage::OnEnChangeEdit3)
+	ON_EN_CHANGE(IDC_EDIT2, &CDlgMessage::OnEnChangeEdit2)
 END_MESSAGE_MAP()
 
 
@@ -207,3 +210,33 @@ void CDlgMessage::OnBnClickedButton3()// 返回按钮
 	// TODO: Add your control notification handler code here
 }
 
+
+
+void CDlgMessage::OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	*pResult = 0;
+}
+
+
+void CDlgMessage::OnEnChangeEdit3()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+void CDlgMessage::OnEnChangeEdit2()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+}

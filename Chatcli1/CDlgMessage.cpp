@@ -6,7 +6,7 @@
 #include "CDlgMessage.h"
 #include "afxdialogex.h"
 
-#define WM_SOCK WM_USER + 1// 自定义消息，在WM_USER的基础上进行
+#define WM_SOCK WM_USER + 1 // 自定义消息，在WM_USER的基础上进行
 #define MAX_BUF_SIZE 128
 
 

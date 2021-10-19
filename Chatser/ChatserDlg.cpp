@@ -82,6 +82,9 @@ BEGIN_MESSAGE_MAP(CChatserDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CChatserDlg::OnBnClickedButton1)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CChatserDlg::OnCbnSelchangeCombo1)
+	ON_EN_CHANGE(IDC_EDIT1, &CChatserDlg::OnEnChangeEdit1)
+	ON_EN_CHANGE(IDC_EDIT4, &CChatserDlg::OnEnChangeEdit4)
+	ON_NOTIFY(IPN_FIELDCHANGED, IDC_IPADDRESS1, &CChatserDlg::OnIpnFieldchangedIpaddress1)
 END_MESSAGE_MAP()
 
 
@@ -202,4 +205,34 @@ void CChatserDlg::OnCbnSelchangeCombo1()
 		con_port_remote.EnableWindow(FALSE);
 		con_ip.EnableWindow(FALSE);
 	}
+}
+
+
+void CChatserDlg::OnEnChangeEdit1()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+void CChatserDlg::OnEnChangeEdit4()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+void CChatserDlg::OnIpnFieldchangedIpaddress1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMIPADDRESS pIPAddr = reinterpret_cast<LPNMIPADDRESS>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	*pResult = 0;
 }

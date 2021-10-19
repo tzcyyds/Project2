@@ -35,4 +35,7 @@ public:
 	afx_msg void OnBnClickedButton3();
 	CString m_send;
 	CListCtrl m_recv;
+	afx_msg void OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEdit3();
+	afx_msg void OnEnChangeEdit2();
 };
