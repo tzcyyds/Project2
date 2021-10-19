@@ -33,9 +33,12 @@ protected:
 public:
 	afx_msg void OnBnClickedButton2();
 	afx_msg void OnBnClickedButton3();
+
+//	CListCtrl m_recv;
+protected:
 	CString m_send;
-	CListCtrl m_recv;
-	afx_msg void OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEnChangeEdit3();
-	afx_msg void OnEnChangeEdit2();
+	CRichEditCtrl m_RichEdit;
+	CString m_time;
+public:
+	void updatetime();
 };

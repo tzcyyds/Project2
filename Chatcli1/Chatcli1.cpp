@@ -37,7 +37,7 @@ CChatcli1App theApp;
 
 BOOL CChatcli1App::InitInstance()
 {
-	// 如果一个运行在 Windows XP 上的应用程序清单指定要
+// TODO: 调用 AfxInitRichEdit2() 以初始化 richedit2 库。\n"	// 如果一个运行在 Windows XP 上的应用程序清单指定要
 	// 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
 	//则需要 InitCommonControlsEx()。  否则，将无法创建窗口。
 	INITCOMMONCONTROLSEX InitCtrls;
@@ -46,6 +46,7 @@ BOOL CChatcli1App::InitInstance()
 	// 公共控件类。
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
+	AfxInitRichEdit2();
 
 	CWinApp::InitInstance();
 
