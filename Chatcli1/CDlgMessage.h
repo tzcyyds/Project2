@@ -33,11 +33,6 @@ protected:
 public:
 	afx_msg void OnBnClickedButton2();
 	afx_msg void OnBnClickedButton3();
-//	CListCtrl m_recv;
-protected:
 	CString m_send;
-	CRichEditCtrl m_RichEdit;
-	CString m_time;
-public:
-	void updatetime();
+	CListCtrl m_recv;
 };
