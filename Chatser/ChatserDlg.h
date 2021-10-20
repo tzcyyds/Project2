@@ -44,4 +44,8 @@ public:
 private:
 	CEdit con_port_remote;
 	CIPAddressCtrl con_ip;
+public:
+	afx_msg void OnEnChangeEdit1();
+	afx_msg void OnEnChangeEdit4();
+	afx_msg void OnIpnFieldchangedIpaddress1(NMHDR* pNMHDR, LRESULT* pResult);
 };
