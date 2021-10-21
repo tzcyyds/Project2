@@ -43,4 +43,6 @@ public:
 	void updatetime();
 	void SendwithColor(CString s, int R, int G, int B, int size);
 	afx_msg void OnEnChangeRichedit21();
+	CEdit m_remote_address;
+	CButton m_message_send;
 };

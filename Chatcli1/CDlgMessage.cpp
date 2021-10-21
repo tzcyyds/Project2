@@ -5,6 +5,7 @@
 #include "Chatcli1.h"
 #include "CDlgMessage.h"
 #include "afxdialogex.h"
+#include "Chatcli1Dlg.h"
 
 
 #define WM_SOCK WM_USER + 1// 自定义消息，在WM_USER的基础上进行
@@ -41,6 +42,8 @@ void CDlgMessage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT3, m_send);
 	//  DDX_Control(pDX, IDC_LIST1, m_recv);
 	DDX_Control(pDX, IDC_RICHEDIT21, m_RichEdit);
+	DDX_Control(pDX, IDC_EDIT2, m_remote_address);
+	DDX_Control(pDX, IDC_BUTTON2, m_message_send);
 }
 
 
@@ -59,10 +62,23 @@ BOOL CDlgMessage::OnInitDialog()
 
 	ModifyStyleEx(0, WS_EX_APPWINDOW);  // 添加任务栏
 	ShowWindow(SW_SHOW);
+	CHARFORMAT cf;
+	ZeroMemory(&cf, sizeof(CHARFORMAT));
+	cf.cbSize = sizeof(CHARFORMAT);
+	cf.dwMask = CFM_BOLD | CFM_COLOR | CFM_FACE |
+		CFM_ITALIC | CFM_SIZE | CFM_UNDERLINE;
+	// cf.dwEffects = CFE_UNDERLINE;
+	cf.yHeight = 14 * 14;//文字高度
+	cf.crTextColor = RGB(6, 128, 67); //文字颜色
+	strcpy_s(cf.szFaceName, _T("隶书"));//设置字体
+	m_RichEdit.SetDefaultCharFormat(cf);
 
 	servAdr.sin_family = AF_INET;
 	servAdr.sin_addr.s_addr = htonl(m_ip);
 	servAdr.sin_port = htons(m_port_remote);
+
+	m_remote_address.SetWindowTextA(inet_ntoa(servAdr.sin_addr));
+
 	WSADATA wsaData;
 	SOCKADDR_IN clntAdr;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
@@ -106,9 +122,7 @@ BOOL CDlgMessage::OnInitDialog()
 			MessageBox("connect() failed", "Client", MB_OK);
 			exit(1);
 		}
-
-
-		
+		SendwithColor("Connection Accepted.\n", 6, 128, 67, 14);  // 自定义函数：设置发送文字颜色和大小并发送
 		if (WSAAsyncSelect(hCommSock, m_hWnd, WM_SOCK, FD_READ | FD_CLOSE) == SOCKET_ERROR)
 		{
 			MessageBox("WSAAsyncSelect() failed", "Client", MB_OK);
@@ -116,28 +130,14 @@ BOOL CDlgMessage::OnInitDialog()
 		}
 	}
 
-	CHARFORMAT cf;
-	ZeroMemory(&cf, sizeof(CHARFORMAT));
-	cf.cbSize = sizeof(CHARFORMAT);
-	cf.dwMask = CFM_BOLD | CFM_COLOR | CFM_FACE |
-		CFM_ITALIC | CFM_SIZE | CFM_UNDERLINE;
-	// cf.dwEffects = CFE_UNDERLINE;
-	cf.yHeight = 14 * 14;//文字高度
-	cf.crTextColor = RGB(6, 128, 67); //文字颜色
-	strcpy_s(cf.szFaceName, _T("隶书"));//设置字体
-	m_RichEdit.SetDefaultCharFormat(cf);
-
-	// CString strText = "init";
-	// m_RichEdit.SetWindowText(strText);
-
-	SendwithColor("Connection Accepted.\n", 6, 128, 67, 14);  // 自定义函数：设置发送文字颜色和大小并发送
 	return TRUE;
 }
 
 
+SOCKET hSocket;
+
 LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	SOCKET hSocket;
 	char buf[MAX_BUF_SIZE] = { 0 };
 	int strLen;
 	int newEvent;
@@ -158,6 +158,7 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 					if (WSAGetLastError() != WSAEWOULDBLOCK)
 					{
 						closesocket(hSocket);
+						//SendwithColor("Connection Canceled.\n", 6, 128, 67, 14);
 						MessageBox("recvfrom() failed", "Client", MB_OK);
 						break;
 					}
@@ -178,6 +179,7 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 					if (WSAGetLastError() != WSAEWOULDBLOCK)
 					{
 						closesocket(hSocket);
+						//SendwithColor("Connection Canceled.\n", 6, 128, 67, 14);
 						MessageBox("recv() failed", "Client", MB_OK);
 						break;
 					}
@@ -194,6 +196,9 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			UpdateData(FALSE);// TODO:接收的控件处理，控件的句柄是m_recv
 			break;
 		case FD_CLOSE:
+			SendwithColor("Connection Canceled.\n", 254, 40, 14, 14);
+			m_remote_address.SetWindowTextA(_T("无"));
+			m_message_send.EnableWindow(FALSE);
 			closesocket(hSocket);
 			break;
 		}
@@ -229,6 +234,18 @@ void CDlgMessage::OnBnClickedButton2()// 发送按钮
 void CDlgMessage::OnBnClickedButton3()// 返回按钮
 {
 	// TODO: Add your control notification handler code here
+	//m_sure.EnableWindow(FALSE);
+	//CDialogEx::ShowWindow(SW_SHOW);
+	//UpdateData(TRUE);
+	shutdown(hSocket, SD_BOTH);
+	closesocket(hSocket);
+	CChatcli1Dlg m_window(NULL);
+	//UpdateData(FALSE);
+	EndDialog(0);// 关闭窗口
+	//DestroyWindow();
+	//m_sure.EnableWindow(FALSE);
+	//CDialogEx::ShowWindow(SW_HIDE);
+	m_window.DoModal();
 }
 
 

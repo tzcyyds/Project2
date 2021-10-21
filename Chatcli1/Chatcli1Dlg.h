@@ -43,4 +43,6 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 private:
 	CEdit con_port_local;
+public:
+	CButton m_sure;
 };

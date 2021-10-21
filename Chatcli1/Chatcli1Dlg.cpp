@@ -73,6 +73,7 @@ void CChatcli1Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT1, m_port_local);
 	DDX_Text(pDX, IDC_EDIT4, m_port_remote);
 	DDX_Control(pDX, IDC_EDIT1, con_port_local);
+	DDX_Control(pDX, IDC_BUTTON1, m_sure);
 }
 
 BEGIN_MESSAGE_MAP(CChatcli1Dlg, CDialogEx)
@@ -183,6 +184,8 @@ void CChatcli1Dlg::OnBnClickedButton1()
 	CDlgMessage m_window(m_ip, m_port_local, m_port_remote, m_combo.GetCurSel());
 	UpdateData(FALSE);
 	EndDialog(0);// 关闭窗口
+	//m_sure.EnableWindow(FALSE);
+	//CDialogEx::ShowWindow(SW_HIDE);
 	m_window.DoModal();
 }
 
