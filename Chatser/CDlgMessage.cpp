@@ -5,6 +5,7 @@
 #include "Chatser.h"
 #include "CDlgMessage.h"
 #include "afxdialogex.h"
+#include "ChatserDlg.h"
 
 #define WM_SOCK WM_USER + 1// 自定义消息，在WM_USER的基础上进行
 #define MAX_BUF_SIZE 128
@@ -39,6 +40,8 @@ void CDlgMessage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT3, m_send);
 	//  DDX_Control(pDX, IDC_LIST1, m_recv);
 	DDX_Control(pDX, IDC_RICHEDIT21, m_RichEdit);
+	DDX_Control(pDX, IDC_EDIT2, m_remote_address);
+	DDX_Control(pDX, IDC_BUTTON2, m_message_send);
 }
 
 
@@ -135,10 +138,9 @@ BOOL CDlgMessage::OnInitDialog()
 	return TRUE;
 }
 
-
+SOCKET hSocket;
 LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	SOCKET hSocket;
 	char buf[MAX_BUF_SIZE] = { 0 };
 	int strLen;
 	int newEvent;
@@ -159,6 +161,7 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			// MessageBox("Connection Accepted", "Server", MB_OK);
 
 			SendwithColor("Connection Accepted.\n", 6, 128, 67, 14);  // 自定义函数：设置发送文字颜色和大小并发送
+			m_remote_address.SetWindowTextA(inet_ntoa(clntAdr.sin_addr));
 
 			break;
 		case FD_READ:
@@ -170,6 +173,9 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					if (WSAGetLastError() != WSAEWOULDBLOCK)
 					{
+						SendwithColor("Connection Canceled.\n", 254, 40, 14, 14);
+						m_remote_address.SetWindowTextA(_T("无"));
+						m_message_send.EnableWindow(FALSE);
 						closesocket(hSocket);
 						MessageBox("recvfrom() failed", "Server", MB_OK);
 						break;
@@ -177,6 +183,7 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 				}
 				else
 				{
+					m_remote_address.SetWindowTextA(inet_ntoa(clntAdr.sin_addr));
 					CString m_recv(buf);
 					updatetime();
 					SendwithColor("client" + m_time, 30, 144, 255, 14);  // 自定义函数：设置发送文字颜色和大小并发送
@@ -190,6 +197,9 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					if (WSAGetLastError() != WSAEWOULDBLOCK)
 					{
+						SendwithColor("Connection Canceled.\n", 254, 40, 14, 14);
+						m_remote_address.SetWindowTextA(_T("无"));
+						m_message_send.EnableWindow(FALSE);
 						closesocket(hSocket);
 						MessageBox("recv() failed", "Server", MB_OK);
 						break;
@@ -208,6 +218,9 @@ LRESULT CDlgMessage::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			UpdateData(FALSE);// TODO:接收的控件处理，控件的句柄是m_recv
 			break;
 		case FD_CLOSE:
+			SendwithColor("Connection Canceled.\n", 254, 40, 14, 14);
+			m_remote_address.SetWindowTextA(_T("无"));
+			m_message_send.EnableWindow(FALSE);
 			closesocket(hSocket);
 			break;
 		}
@@ -248,6 +261,19 @@ void CDlgMessage::OnBnClickedButton2()// 发送按钮
 void CDlgMessage::OnBnClickedButton3()// 返回按钮
 {
 	// TODO: Add your control notification handler code here
+		// TODO: Add your control notification handler code here
+	//m_sure.EnableWindow(FALSE);
+	//CDialogEx::ShowWindow(SW_SHOW);
+	//UpdateData(TRUE);
+	shutdown(hSocket, SD_BOTH);
+	closesocket(hSocket);
+	CChatserDlg m_window(NULL);
+	//UpdateData(FALSE);
+	EndDialog(0);// 关闭窗口
+	//DestroyWindow();
+	//m_sure.EnableWindow(FALSE);
+	//CDialogEx::ShowWindow(SW_HIDE);
+	m_window.DoModal();
 }
 
 

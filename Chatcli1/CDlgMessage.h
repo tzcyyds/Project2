@@ -41,4 +41,6 @@ protected:
 public:
 	void updatetime();
 	void SendwithColor(CString s, int R, int G, int B, int size);
+	CEdit m_remote_address;
+	CButton m_message_send;
 };
